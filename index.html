@@ -6,7 +6,14 @@
     <title>Análise de Exames da Lê</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- Adicionando PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
+      // Configuração do Worker do PDF.js
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+
       tailwind.config = {
         theme: {
           extend: {

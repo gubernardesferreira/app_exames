@@ -134,19 +134,13 @@ const App: React.FC = () => {
     const finishProcessing = (data: LabResult[], emptyMsg: string) => {
         if (data.length === 0) {
             setError(emptyMsg);
-            // Não limpamos labResults aqui para não apagar dados anteriores se o novo arquivo falhar
+            // Se não encontrou dados, não faz nada com o estado anterior
         } else {
-            // Merge with existing data if needed, or simply replace/deduplicate
-            // For this app, let's assume importing replaces or appends unique.
-            // Let's perform a smart merge: append new results to existing, then deduplicate
+            // Substitui completamente os dados existentes pelos novos (solicitação do usuário)
+            const sortedData = [...data].sort((a, b) => a.date.getTime() - b.date.getTime());
             
-            const combinedData = [...labResults, ...data];
-            
-            const uniqueData = combinedData.filter((v,i,a)=>a.findIndex(t=>(t.examName===v.examName && t.date.getTime()===v.date.getTime()))===i);
-            uniqueData.sort((a, b) => a.date.getTime() - b.date.getTime());
-            
-            setLabResults(uniqueData);
-            localStorage.setItem('labResultsData', JSON.stringify(uniqueData));
+            setLabResults(sortedData);
+            localStorage.setItem('labResultsData', JSON.stringify(sortedData));
             setError(null);
         }
         setIsLoading(false);
@@ -155,8 +149,7 @@ const App: React.FC = () => {
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         
-        // Reset do input para permitir selecionar o mesmo arquivo novamente caso haja erro ou limpeza
-        // Fazemos isso antes do processamento para garantir que o evento onChange dispare na próxima vez
+        // Reset do input para permitir selecionar o mesmo arquivo novamente
         e.target.value = '';
 
         if (!file) {
@@ -172,7 +165,7 @@ const App: React.FC = () => {
         } else {
             processExcel(file);
         }
-    }, [labResults]);
+    }, []);
 
     const ViewToggle: React.FC = () => (
         <div className="flex justify-center my-6">
